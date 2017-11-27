@@ -1,0 +1,76 @@
+body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, li, a, p, h1, h2, h3, h4,h5, h6, i, b, textarea, button, input, select, figure, figcaption, {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    font-style: normal;
+    text-decoration: none;
+    border: none;
+    color: #333;
+    font-weight: normal;
+    font-family: "Microsoft Yahei";
+    outline: none;
+    // 移动端轻按时高亮
+    -webkit-tap-highlight-color:transparent;
+    // IOS字体抗锯齿
+    -webkit-font-smoothing: antialiased;
+    // 移动端点击后不会出现边框
+    &:hover{
+        outline: none;
+    }
+}
+span, i{
+    display: inline-block;
+}
+.text-left{
+    text-align: left;
+}
+.text-right{
+    text-align: right;
+}
+.bfc{
+    overflow: auto;
+}
+.rela{
+    position: relative;
+}
+.absol{
+    position: absolute;
+}
+.ellipsis{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.color-gray{
+    color: #cccccc;
+}
+.left{
+    float: left;
+}
+.right{
+    float: right;
+}
+.clear::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+.clear{
+    zoom: 1;
+}
+.hide{
+    display: none;
+}
+.show{
+    display: block;
+}
+.text-center{
+    text-align: center;
+}
+.margin-center{
+    margin: 0 auto;
+}
+.center{
+    text-align: center;
+    margin: 0 auto;
+}
