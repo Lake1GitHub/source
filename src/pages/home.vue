@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style='background-color: rgb(245, 245, 245);'>
         <head-top current-page='findMusic' current-cut='discover'></head-top>
         <div class='swiper-container swiper1'>
             <div class='swiper-wrapper'>
@@ -49,7 +49,7 @@
                                         </span>
                                     </span>
                                 </div>
-                                <p>{{ hot.text }}</p>
+                                <router-link class='hotText' :to='hot.to'>{{ hot.text }}</router-link>
                             </li>
                         </ul>
                     </div>
@@ -105,7 +105,7 @@
                                     <span class='list-order'>{{ index+1 }} </span>
                                     <span class='context ellipsis'><router-link :to='up.href'> {{ up.context }} </router-link></span>
                                 </li>
-                                <li class='seeAll list-item'>查看全部></li>
+                                <router-link tag='li' class='seeAll list-item' to="/album">查看全部></router-link>
                             </ul>
                             <ul class='table-two'>
                                 <li class='list-type'>
@@ -128,7 +128,7 @@
                                     <span class='list-order'>{{ index+1 }} </span>
                                     <span class='context ellipsis'><router-link :to='news.href'> {{ news.context }} </router-link></span>
                                 </li>
-                                <li class='seeAll list-item'>查看全部></li>
+                                <router-link tag='li' class='seeAll list-item' to="/album">查看全部></router-link>
                             </ul>
                             <ul class='table-three'>
                                 <li class='list-type'>
@@ -151,16 +151,31 @@
                                     <span class='list-order'>{{ index+1 }} </span>
                                     <span class='context ellipsis'><router-link :to='power.href'> {{ power.context }} </router-link></span>
                                 </li>
-                                <li class='seeAll list-item'>查看全部></li>
+                                <router-link tag='li' class='seeAll list-item' to="/album">查看全部></router-link>
                             </ul>
                         </div>
                     </div>
                 </section>
             </div>
             <div class='page-right'>
-                <section class='userLogin'>
+                <section v-if='isLogin' class='user-login'>
                     <p>登录网易云音乐，可以享受无限收藏的乐趣，并且无限同步到手机</p>
-                    <button>用户登录</button>
+                    <router-link class='login' to='/login'>用户登录</router-link>
+                </section>
+                <section v-else class='user-login'>
+                    <div class='user-message'>
+                        <span class='user-pic'><img src='../assets/user.jpg' /></span>
+                        <span class='user-detail'>
+                            <span class='user-name'>YXCoder</span>
+                            <span class='user-level'></span>
+                            <router-link class='user-sign' tab='button' to='/album'></router-link>
+                        </span>
+                    </div>
+                    <div class='user-social'>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </section>
                 <section class='singerSet'>
                     <div class='right-box'>
@@ -173,7 +188,7 @@
                             </span>
                         </section>
                         <div class='register'>
-                            <button>申请成为网易音乐人</button>
+                            <router-link tag='button' to='register'>申请成为网易音乐人</router-link>
                         </div>
                     </div>
                 </section>
@@ -188,6 +203,7 @@
                     </section>
                 </section>
             </div>
+            <div class='clear'></div>
         </div>
     </div>
 </template>
@@ -208,6 +224,7 @@ export default {
                 newsShow: [],
                 upsShow: []
             },
+            isLogin: false,
             // 这里路径注意一下，
             albums: [
                 { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/1.jpg' },
@@ -342,6 +359,9 @@ export default {
     }
     .seeAll{
         float: right;
+        &:hover{
+            text-decoration: underline;
+        }
     }
     .tverHot{
         width: 80%;
@@ -381,6 +401,10 @@ export default {
                     box-shadow: 0 0 1px darkgray;
                     font-weight: bold;
                     @include wh(200px, 30px);
+                    &:hover{
+                        cursor: pointer;
+                        background: white;
+                    }
                 }
             }
             .singerList{
@@ -412,26 +436,52 @@ export default {
             }
         }
     }
-    .userLogin{
+    .user-login{
+        display: inline-block;
         @include linearGradient(rgb(252, 252, 252), rgb(225, 225, 225));
         text-align: center;
         border-bottom: 1px solid lightgray;
+        padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
+        .user-message{
+            text-align: left;
+            width: 100%;
+            .user-pic{
+                height: 84px;
+                text-align: center;
+                float: left;
+                border: 1px solid lightgray;
+                background-color: white;
+                img{
+                    margin: 2px;
+                }
+            }
+            .user-detail{
+                width: 49%;
+                .user-name{
+
+                }
+            }
+        }
         p{
             color: gray;
             font-size: 12px;
-            width: 80%;
-            margin: 20px auto;
+            margin: auto;
+            width: 100%;
             text-align: left;
             line-height:20px;
         }
-        button{
+        .login{
+            display: inline-block;
+            margin-top: 20px;
+            line-height: 30px;
             font-size: 12px;
             @include wh(40%, 30px);
             @include linearGradient(rgb(228, 24, 32), rgb(188, 7, 12));
             @include borderRadius(5px);
             box-shadow: 0 0 1px black;
             color: white;
-            margin-bottom: 20px;
         }
     }
 }
@@ -514,6 +564,10 @@ export default {
             }
         }
         .seeAll{
+            &:hover{
+                cursor: pointer;
+                text-decoration: underline;
+            }
             text-align: right;
             padding-right: 30px;
         }
@@ -735,14 +789,13 @@ export default {
 .page-detail{
     box-sizing: border-box;
     background-color: white;
-    @include wh(980px, 1000px);
+    @include wh(980px, auto);
     margin: 0 auto;
     border-left: 1px solid lightgray;
     border-right: 1px solid lightgray;
 }
 .page-left{
     box-sizing: border-box;
-    border-left: 1px solid lightgray;
     border-right: 1px solid lightgray;
     width: 726px;
     float: left;
@@ -750,7 +803,7 @@ export default {
 }
 .page-right{
     box-sizing: border-box;
-    @include wh(251px, 300px);
+    @include wh(251px, auto);
     float: right;
 }
 .circle-icon{
@@ -760,6 +813,9 @@ export default {
 .see-more{
     float: right;
     font-size: 12px;
+    &:hover{
+        text-decoration: underline;
+    }
     &:after{
         content: '';
         display: inline-block;
@@ -781,6 +837,9 @@ export default {
         padding: 0 15px;
         line-height: 12px;
         border-left: 2px solid lightgray;
+        &:hover{
+            text-decoration: underline;
+        }
         &:nth-of-type(2){
             padding: 0 15px;
             line-height: 12px;
@@ -838,8 +897,12 @@ export default {
                 vertical-align: top;
             }
         }
-        p{
+        .hotText{
+            display: inline-block;
             line-height: 20px;
+            &:hover{
+                text-decoration: underline;
+            }
         }
     }
 }
