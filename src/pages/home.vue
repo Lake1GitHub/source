@@ -1,6 +1,6 @@
 <template>
     <div style='background-color: rgb(245, 245, 245);'>
-        <head-top current-page='findMusic' current-cut='discover'></head-top>
+        <head-top current-page='findMusic' current-cut='discover' :isLogin=isLogin @exit = 'exit' @login = 'login'></head-top>
         <div class='swiper-container swiper1'>
             <div class='swiper-wrapper'>
                 <!-- 由于swiper的原因，不能直接在 swiper-slide 上添加背景颜色-->
@@ -158,7 +158,7 @@
                 </section>
             </div>
             <div class='page-right'>
-                <section v-if='isLogin' class='user-login'>
+                <section v-if='isLogin === false' class='user-login'>
                     <p>登录网易云音乐，可以享受无限收藏的乐趣，并且无限同步到手机</p>
                     <router-link class='login' to='/login'>用户登录</router-link>
                 </section>
@@ -166,15 +166,32 @@
                     <div class='user-message'>
                         <span class='user-pic'><img src='../assets/user.jpg' /></span>
                         <span class='user-detail'>
-                            <span class='user-name'>YXCoder</span>
-                            <span class='user-level'></span>
-                            <router-link class='user-sign' tab='button' to='/album'></router-link>
+                            <router-link tag='div' to='/album' class='user-name ellipsis'>{{ user.name }}</router-link>
+                            <router-link tag='div' to='/album' class='user-level'>
+                                {{ user.level }}
+                                <i class='level-icon'>
+                                </i>
+                            </router-link>
+                            <router-link class='user-sign' tag='button' to='/album'>
+                                <i class='btn-icon'>
+                                    签 到
+                                </i>
+                            </router-link>
                         </span>
                     </div>
                     <div class='user-social'>
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                        <router-link tag='span' to='/album' class='user-actions'>
+                            <span>{{ user.action }}</span><br />
+                            <span>动态</span>
+                        </router-link>
+                        <router-link tag='span' to='/album' class='user-follows'>
+                            <span>{{ user.followers }}</span><br />
+                            <span>关注</span>
+                        </router-link>
+                        <router-link tag='span' to='/album' class='user-fans'>
+                            <span>{{ user.following }}</span><br />
+                            <span>粉丝</span>
+                        </router-link>
                     </div>
                 </section>
                 <section class='singerSet'>
@@ -205,10 +222,14 @@
             </div>
             <div class='clear'></div>
         </div>
+        <foot></foot>
     </div>
 </template>
 <script>
 import headTop from '../components/head.vue'
+import foot from '../components/foot.vue'
+import data from '../mock/mock.js'
+import axios from 'axios'
 import '../plugins/swiper.min.js'
 import '../styles/swiper.min.css'
 
@@ -223,6 +244,13 @@ export default {
                 powerShow: [],
                 newsShow: [],
                 upsShow: []
+            },
+            user: {
+                name: '',
+                level: 0,
+                action: 1,
+                followers: 0,
+                following: 0
             },
             isLogin: false,
             // 这里路径注意一下，
@@ -305,16 +333,16 @@ export default {
                 { src: 'src/assets/GJDJY.jpg', name: '国家大剧院古典音乐频道', desc: '国家大剧院古典音乐官方' },
                 { src: 'src/assets/XXST.jpg', name: '谢谢收听', desc: '南京电台主持人王罄' },
                 { src: 'src/assets/DJ_XS.jpg', name: 'DJ晓苏', desc: '独立DJ，CRI环球旅游广播特邀DJ' }
-            ]
+            ],
         }
     },
     name: 'home',
     components: {
-        headTop
+        headTop,
+        foot
     },
     methods: {
         getShow: function(array, index){
-            console.log('getShow');
             return true;
         },
         show: function(context, index){
@@ -322,6 +350,22 @@ export default {
         },
         hide: function(context, index){
             this.$set(this.forShow[context], index, false);
+        },
+        exit: function(){
+            this.isLogin = false;
+        },
+        login: function(){
+            var user;
+            var self = this;
+            console.log(this.user);
+            axios.get('http://g.cn').then(function(response){
+                user = response.data;
+                self.user = user;
+                console.log(user);
+            }).catch(function(err){
+                console.log(err);
+            })
+            this.isLogin = true;
         }
     },
     mounted(){
@@ -342,6 +386,13 @@ export default {
             prevButton: '.swiper-button-prev2',
             nextButton: '.swiper-button-next2',
         });
+        if(this.isLogin === true){
+            axios.get('http://g.cn').then(function(response){
+                self.idImage = response.data.name;
+            }).catch(function(err){
+                console.log(err);
+            })
+        }
     }
 }
 </script>
@@ -444,6 +495,35 @@ export default {
         padding: 20px;
         width: 100%;
         box-sizing: border-box;
+        .user-social{
+            margin-top: 15px;
+            text-align: left;
+            line-height: 1;
+            >span{
+                color: gray;
+                font-size: 18px;
+                >span:nth-of-type(2){
+                    font-size: 12px;
+                }
+                &:hover{
+                    span{
+                        color: #0c73c2;
+                    }
+                    cursor: pointer;
+                }
+            }
+            .user-actions{
+                padding-right: 18px;
+            }
+            .user-follows{
+                padding: 0 18px;
+                border-left: 1px solid lightgray;
+                border-right: 1px solid lightgray;
+            }
+            .user-fans{
+                padding-left: 18px;
+            }
+        }
         .user-message{
             text-align: left;
             width: 100%;
@@ -459,8 +539,68 @@ export default {
             }
             .user-detail{
                 width: 49%;
+                margin-left: 20px;
                 .user-name{
-
+                    font-size: 14px;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    &:hover{
+                        cursor: pointer;
+                        text-decoration: underline;
+                    }
+                }
+                .user-level{
+                    box-sizing: border-box;
+                    line-height: 18px;
+                    text-align: right;
+                    @include wh(45px, 17px);
+                    @include sprites('../assets/icon2.png',-130px, -64px);
+                    padding-left: 20px;
+                    font-style: italic;
+                    font-weight: bold;
+                    color: #999;
+                    font-family: "Arial", "Helvetica", "sans-serif";
+                    font-size: 12px;
+                    margin-bottom: 15px;
+                     &:hover{
+                         cursor: pointer;
+                         color: #777;
+                         background-position: -130px -84px;
+                         .level-icon{
+                             background-position: -192px -84px;
+                         }
+                     }
+                    .level-icon{
+                        float: right;
+                        @include wh(8px, 17px);
+                        @include sprites('../assets/icon2.png', -192px, -64px);
+                     }
+                }
+                .user-sign{
+                    @include wh(100px, 31px);
+                    @include sprites('../assets/button2.png', right, -428px);
+                    padding-right: 5px;
+                    &:hover{
+                        background-position: right -510px;
+                    }
+                    &:active{
+                        background-position: right -592px;
+                    }
+                    .btn-icon{
+                        cursor: pointer;
+                        text-align: center;
+                        line-height: 30px;
+                        color: white;
+                        padding-left: 2px;
+                        @include wh(100%, 100%);
+                        @include sprites('../assets/button2.png', left, -387px);
+                        &:hover{
+                             background-position: left -469px;
+                        }
+                        &:active{
+                            background-position: left -551px;
+                        }
+                    }
                 }
             }
         }
@@ -597,6 +737,7 @@ export default {
                 display: inline-block;
                 position: absolute;
                 top: 0;
+                left: 0;
                 @include wh(80px, 80px);
                 @include sprites('../assets/coverall.png', -145px, -57px);
             }
@@ -712,10 +853,13 @@ export default {
     display: inline-block;
     position: absolute;
     top: 0;
+    left: 0;
 }
 .download-btn{
     display: block;
     @include wh(215px, 56px);
+    border: 0;
+    outline: 0;
     margin-top: 212px;
     margin-left: 19px;
     &:hover{
@@ -858,6 +1002,7 @@ export default {
             .hot-songs-unit{
                 position: absolute;
                 bottom: 0;
+                left: 0;
                 @include wh(140px, 27px);
                 @include sprites('../assets/coverall.png', 0, -537px);
                 .hot-songs-container{

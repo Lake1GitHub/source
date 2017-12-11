@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import Router from 'vue-router'
 import routes from './router'
+import Mock from 'mockjs'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 
 Vue.config.productionTip = false

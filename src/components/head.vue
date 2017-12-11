@@ -36,14 +36,18 @@
                 <div class='right-part'>
                     <div class='right login-box'>
                         <a class='right login' v-on:mouseover="showList" v-on:mouseleave='hideList'>
-                            <span>
-                                登录&nbsp;
+                                <span v-if='isLogin === false' @click='login'>
+                                <span>登录</span>&nbsp;
+                                <i class='down-angle'></i>
+                            </span>
+                            <span v-else>
+                                <img class='idImage' :src='idImage' />&nbsp;
                                 <i class='down-angle'></i>
                             </span>
                         </a>
                         <div class='login-list hide' :class='{ show: loginIsShow }' v-on:mouseover="showList" v-on:mouseleave='hideList'>
-                            <ul v-if='!isLogin' class='login-ul'>
-                                <li><span><i class='login-tel'></i></span>手机号登录</li>
+                            <ul v-if='isLogin === false' class='login-ul'>
+                                <li v-on:click='postAjax()'><span><i class='login-tel'></i></span>手机号登录</li>
                                 <li><span><i class='login-wechat'></i></span>微信登录</li>
                                 <li><span><i class='login-qq'></i></span>QQ登录</li>
                                 <li><span><i class='login-sina'></i></span>新浪微博登录</li>
@@ -55,7 +59,7 @@
                                 <li><span><i class='my-level'></i></span>我的等级</li>
                                 <li><span><i class='vip-center'></i></span>会员中心</li>
                                 <li><span><i class='self-set'></i></span>个人设置</li>
-                                <li><span><i class='logout'></i></span>退出</li>
+                                <li @click='exit'><span><i class='logout'></i></span>退出</li>
                             </ul>
                             <span class='up-angle'></span>
                         </div>
@@ -91,6 +95,8 @@
     </header>
 </template>
 <script>
+import axios from 'axios'
+import data from '../mock/mock.js'
 export default {
     props: ['currentPage', 'currentCut', 'isLogin'],
     data: function(){
@@ -98,6 +104,7 @@ export default {
             loginIsShow: false,   //准备登录
             searchIsShow: false,  //准备检索
             searchMessage: 'asdf', //检索信息
+            idImage: '',
             searchResult: [         //检索结果
                 {
                     name: '单曲',
@@ -166,6 +173,22 @@ export default {
         },
         hideSearch: function(){
             this.searchIsShow = false;
+        },
+        getId: function( fn ){
+             var self = this;
+             axios.get('http://g.cn').then(function(response){
+                 self.idImage = response.data.img;
+             }).catch(function(err){
+                 console.log(err);
+             })
+        },
+        exit: function(){
+            this.getId();
+            this.$emit('exit');
+        },
+        login: function(){
+            this.getId();
+            this.$emit('login');
         }
     }
 }
@@ -281,6 +304,9 @@ export default {
     position: relative;
     .login span{
         color: #999;
+        img{
+            border-radius: 50%;
+        }
         &:hover{
             color: #787878;
             text-decoration: underline;
