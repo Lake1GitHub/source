@@ -1,8 +1,11 @@
 <template>
-    <router-view/>
+    <div>
+        <router-view></router-view>
+    </div>
 </template>
 
 <script>
+import './mock/mock.js'
 export default {
   name: 'app'
 }

@@ -5,19 +5,19 @@
             <router-link to='/home' class='logo'></router-link>
             <ul class='top-list'>
                 <li class='left'>
-                    <router-link to='/home' class='find-music' :class="{isClicked: currentPage==='findMusic'}">发现音乐</router-link>
-                    <i v-show='hasNotice("findMusic")' class='dot'></i>
-                    <span v-if="currentPage==='findMusic'" class='currentPage-angle'></span>
+                    <router-link to='/home/discover' class='find-music' :class="{isClicked: Chapter==='discover'}">发现音乐</router-link>
+                    <i v-show='hasNotice("discover")' class='dot'></i>
+                    <span v-if="Chapter==='discover'" class='currentPage-angle'></span>
                 </li>
                 <li class='left'>
-                    <router-link to='/myMusic' class='find-music' :class="{isClicked: currentPage==='myMusic'}">我的音乐</router-link>
+                    <router-link to='/myMusic' class='find-music' :class="{isClicked: Chapter==='myMusic'}">我的音乐</router-link>
                     <i v-show='hasNotice("myMusic")' class='dot'></i>
-                    <span v-if="currentPage==='myMusic'" class='currentPage-angle'></span>
+                    <span v-if="Chapter==='myMusic'" class='currentPage-angle'></span>
                 </li>
                 <li class='left'>
-                    <router-link to='/friend' class='find-music' :class="{isClicked: currentPage==='friend'}">朋友</router-link>
+                    <router-link to='/friend' class='find-music' :class="{isClicked: Chapter==='friend'}">朋友</router-link>
                     <i v-show='hasNotice("friend")' class='dot'></i>
-                    <span v-if="currentPage==='friend'" class='currentPage-angle'></span>
+                    <span v-if="Chapter==='friend'" class='currentPage-angle'></span>
                 </li>
                 <li class='left'>
                     <router-link to='/home' class='find-music'>商城</router-link>
@@ -36,14 +36,18 @@
                 <div class='right-part'>
                     <div class='right login-box'>
                         <a class='right login' v-on:mouseover="showList" v-on:mouseleave='hideList'>
-                            <span>
-                                登录&nbsp;
+                            <span v-if='isLogin === false' @click='login'>
+                                <span class='hoverStyle'>登录</span>&nbsp;
+                                <i class='down-angle'></i>
+                            </span>
+                            <span v-else>
+                                <img class='idImage' :src='idImage' />&nbsp;
                                 <i class='down-angle'></i>
                             </span>
                         </a>
                         <div class='login-list hide' :class='{ show: loginIsShow }' v-on:mouseover="showList" v-on:mouseleave='hideList'>
-                            <ul v-if='!isLogin' class='login-ul'>
-                                <li><span><i class='login-tel'></i></span>手机号登录</li>
+                            <ul v-if='isLogin === false' class='login-ul'>
+                                <li v-on:click='postAjax()'><span><i class='login-tel'></i></span>手机号登录</li>
                                 <li><span><i class='login-wechat'></i></span>微信登录</li>
                                 <li><span><i class='login-qq'></i></span>QQ登录</li>
                                 <li><span><i class='login-sina'></i></span>新浪微博登录</li>
@@ -55,7 +59,7 @@
                                 <li><span><i class='my-level'></i></span>我的等级</li>
                                 <li><span><i class='vip-center'></i></span>会员中心</li>
                                 <li><span><i class='self-set'></i></span>个人设置</li>
-                                <li><span><i class='logout'></i></span>退出</li>
+                                <li @click='exit'><span><i class='logout'></i></span>退出</li>
                             </ul>
                             <span class='up-angle'></span>
                         </div>
@@ -64,7 +68,7 @@
                     <div class='right search'>
                         <input v-on:input='searchList' v-on:blur='hideSearch' placeholder='音乐/电台/用户' />
                         <div class='search-detail hide' :class='{ show: searchIsShow }'>
-                            <p class='search-container'>搜 "{{ searchMessage }}" 相关用户 ></p>
+                            <p class='search-container ellipsis'>搜 "<span class='ellipsis'>{{ searchMessage }}</span>" 相关用户 ></p>
                             <div v-for='response in searchResult' v-if='' class='detail-box'>
                                 <h3 class='left search-type'><i :class='response.icon'></i> {{ response.name }}</h3>
                                 <div class='bfc search-list'>
@@ -79,25 +83,33 @@
         <div class='list-detail'>
             <div class='list-box center'>
                 <ul class='list-wrap center'>
-                    <li class='left' :class="{isSelected: currentCut==='discover'}"><router-link to='/home/discover'>推荐</router-link></li>
-                    <li class='left' :class="{isSelected: currentCut==='toplist'}"><router-link to='/home/tiplist'>排行榜</router-link></li>
-                    <li class='left' :class="{isSelected: currentCut==='playlist'}"><router-link to='/home/playlist'>榜单</router-link></li>
-                    <li class='left' :class="{isSelected: currentPage==='djradio'}"><router-link to='/home/djradio'>主播电台</router-link></li>
-                    <li class='left' :class="{isSelected: currentPage==='artist'}"><router-link to='/home/artist'>歌手</router-link></li>
-                    <li class='left' :class="{isSelected: currentPage==='album'}"><router-link to='/home/album'>新碟上架</router-link></li>
+                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='recommend'}" to='/home'>推荐</router-link>
+                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='toplist'}" to='/discover/toplist'>排行榜</router-link>
+                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='playlist'}" to='/discover/playlist'>榜单</router-link>
+                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='djradio'}" to='/discover/djradio'>主播电台</router-link>
+                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='artist'}" to='/discover/artist'>歌手</router-link>
+                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='album'}" to='/discover/album'>新碟上架</router-link>
+                    <!-- <<router-link :to="{ name: '', params: {} }"></router-link> -->
                 </ul>
             </div>
         </div>
     </header>
 </template>
 <script>
+import axios from 'axios'
+import data from '../mock/mock.js'
+import {mapGetters, mapMutations} from 'vuex'
 export default {
-    props: ['currentPage', 'currentCut', 'isLogin'],
+    props: [
+        'Chapter',    // 顶部栏目
+        'currentPage' // discover栏目下的子页面
+    ],
     data: function(){
         return {
             loginIsShow: false,   //准备登录
             searchIsShow: false,  //准备检索
-            searchMessage: 'asdf', //检索信息
+            searchMessage: '', //检索信息
+            idImage: '',
             searchResult: [         //检索结果
                 {
                     name: '单曲',
@@ -152,21 +164,43 @@ export default {
             }
         }
     },
+    computed:{
+        ...mapGetters(['isLogin']),
+
+    },
     methods:{
-        showList: function(){
+        showList(){
             this.loginIsShow = true;
         },
-        hideList: function(){
+        hideList(){
             this.loginIsShow = false;
         },
-        searchList: function(content){
-            console.log(content.target.value);
+        searchList(content){
             this.searchIsShow = true;
             this.searchMessage = content.target.value;
         },
-        hideSearch: function(){
+        hideSearch(){
             this.searchIsShow = false;
-        }
+        },
+        getId(){
+             var self = this;
+             axios.get('http://g.cn').then(function(response){
+                 self.idImage = response.data.img;
+             }).catch(function(err){
+                 console.log(err);
+             })
+        },
+        exit(){
+            this.setLoginOut();
+        },
+        login(){
+            this.getId();
+            this.setLoginIn();
+        },
+        ...mapMutations(['setLoginIn', 'setLoginOut'])
+    },
+    mounted(){
+        console.log(this.currentPage);
     }
 }
 
@@ -185,6 +219,7 @@ export default {
         background: url('../assets/topbar.png') 0px -99px no-repeat;
         background-color: white;
         padding-left: 30px;
+        padding-right: 15px;
     }
 }
 .right-part{
@@ -236,6 +271,12 @@ export default {
         text-align: left;
         padding: 5px 0;
         padding-left: 10px;
+        span{
+            display: inline-block;
+            max-width: 100px;
+            vertical-align: middle;
+            margin-bottom: 1px;
+        }
     }
     .singleIcon{
         vertical-align: middle;
@@ -281,7 +322,11 @@ export default {
     position: relative;
     .login span{
         color: #999;
-        &:hover{
+        img{
+            border-radius: 50%;
+            margin-bottom: 3px;
+        }
+        .hoverStyle:hover{
             color: #787878;
             text-decoration: underline;
         }
@@ -295,8 +340,8 @@ export default {
         width: 14px;
         height: 8px;
         background: url('../assets/toplist.png') -20px 0 no-repeat;
-        top: 48px;
-        left: 24px;
+        top: 50px;
+        left: 19px;
     };
 }
 .top-list .login-ul{

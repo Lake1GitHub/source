@@ -21,6 +21,19 @@ body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, l
 span, i{
     display: inline-block;
 }
+i{
+    vertical-align: middle;
+}
+img{
+    vertical-align: middle;
+    max-width: 100%;
+}
+.wrap{
+    position: relative;
+    width: 980px;
+    margin: 0 auto;
+    overflow: hidden;
+}
 .text-left{
     text-align: left;
 }
@@ -28,7 +41,7 @@ span, i{
     text-align: right;
 }
 .bfc{
-    overflow: auto;
+    overflow: hidden;
 }
 .rela{
     position: relative;

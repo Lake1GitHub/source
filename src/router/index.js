@@ -1,21 +1,29 @@
-import HelloWorld from '@/components/HelloWorld'
-import home from '@/pages/home'
-
-
-export default [
+import App from '../App'
+const home = r => require.ensure([], ()=>r(require('../pages/home.vue'), 'home'));
+const toplist = r => require.ensure([], ()=>r(require('../pages/toplist/toplist.vue'), 'toplist'));
+const content = r => require.ensure([], ()=>r(require('../pages/mainContent.vue'), 'main'));
+const routes = [
     {
         path: '/',
-        name: 'HelloWorld',
-        component: HelloWorld,
-    },
-    {
-        path: '/home',
-        name: 'home',
-        component: home
-    },
-    {
-        path: '/home/discover',
-        name: 'discover',
-        component: home
+        component: App,
+        children: [
+            {
+                path: '/home',
+                component: home,
+            },
+            {
+                path: '/discover',
+                component: content,
+                children: [{
+                    path: 'toplist',
+                    component: toplist
+                }]
+            },
+            {
+                path: '',
+                component: home
+            }
+        ]
     }
 ]
+export default routes

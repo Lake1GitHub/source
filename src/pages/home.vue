@@ -1,6 +1,7 @@
 <template>
     <div style='background-color: rgb(245, 245, 245);'>
-        <head-top current-page='findMusic' current-cut='discover'></head-top>
+        <!-- <login-box></login-box> -->
+        <head-top currentPage='recommend' Chapter='discover'></head-top>
         <div class='swiper-container swiper1'>
             <div class='swiper-wrapper'>
                 <!-- 由于swiper的原因，不能直接在 swiper-slide 上添加背景颜色-->
@@ -158,7 +159,7 @@
                 </section>
             </div>
             <div class='page-right'>
-                <section v-if='isLogin' class='user-login'>
+                <section v-if='isLogin === false' class='user-login'>
                     <p>登录网易云音乐，可以享受无限收藏的乐趣，并且无限同步到手机</p>
                     <router-link class='login' to='/login'>用户登录</router-link>
                 </section>
@@ -166,15 +167,32 @@
                     <div class='user-message'>
                         <span class='user-pic'><img src='../assets/user.jpg' /></span>
                         <span class='user-detail'>
-                            <span class='user-name'>YXCoder</span>
-                            <span class='user-level'></span>
-                            <router-link class='user-sign' tab='button' to='/album'></router-link>
+                            <router-link tag='div' to='/album' class='user-name ellipsis'>{{ user.name }}</router-link>
+                            <router-link tag='div' to='/album' class='user-level'>
+                                {{ user.level }}
+                                <i class='level-icon'>
+                                </i>
+                            </router-link>
+                            <router-link class='user-sign' tag='button' to='/album'>
+                                <i class='btn-icon'>
+                                    签 到
+                                </i>
+                            </router-link>
                         </span>
                     </div>
                     <div class='user-social'>
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                        <router-link tag='span' to='/album' class='user-actions'>
+                            <span>{{ user.action }}</span><br />
+                            <span>动态</span>
+                        </router-link>
+                        <router-link tag='span' to='/album' class='user-follows'>
+                            <span>{{ user.followers }}</span><br />
+                            <span>关注</span>
+                        </router-link>
+                        <router-link tag='span' to='/album' class='user-fans'>
+                            <span>{{ user.following }}</span><br />
+                            <span>粉丝</span>
+                        </router-link>
                     </div>
                 </section>
                 <section class='singerSet'>
@@ -205,18 +223,22 @@
             </div>
             <div class='clear'></div>
         </div>
+        <foot></foot>
     </div>
 </template>
 <script>
 import headTop from '../components/head.vue'
+import foot from '../components/foot.vue'
+import loginBox from '../components/loginBox.vue'
+import axios from 'axios'
+import {mapGetters, mapMutations} from 'vuex'
 import '../plugins/swiper.min.js'
-import '../styles/swiper.min.css'
 
 export default {
     data(){
         return {
-            currentPage: 'findMusic',
-            currentCut: 'discover',
+            currentPage: 'recommend',
+            Chapter: 'discover',
             slideBackground: ['#F0F3FC','#7E7D83','#831218','#000000','#004799','#596B75'],
             forShow: {
                 albumsShow: [],
@@ -224,19 +246,15 @@ export default {
                 newsShow: [],
                 upsShow: []
             },
-            isLogin: false,
+            user: {
+                name: '',
+                level: 0,
+                action: 1,
+                followers: 0,
+                following: 0
+            },
             // 这里路径注意一下，
             albums: [
-                { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/1.jpg' },
-                { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/2.jpg' },
-                { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/3.jpg' },
-                { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/4.jpg' },
-                { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/5.jpg' },
-                { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/6.jpg' },
-                { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/7.jpg' },
-                { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/8.jpg' },
-                { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/9.jpg' },
-                { link: '123', listen: '123', name: '孙燕姿', artist: '孙燕姿No.13作品集', src: 'src/assets/slide2/10.jpg' }
             ],
             hots: [
                 { src: 'src/assets/songs/pic1.jpg', to: '/discover/playlist', count: '100', text: '北欧后摇氛围,如梦似幻的落寞之旅' },
@@ -246,7 +264,7 @@ export default {
                 { src: 'src/assets/songs/pic5.jpg', to: '/discover/playlist', count: '500', text: '【怀疑耳机坏了系列】耳机你对耳朵做了什么'},
                 { src: 'src/assets/songs/pic6.jpg', to: '/discover/playlist', count: '600', text: '马戏 : 谁在钢丝上行走？'},
                 { src: 'src/assets/songs/pic7.jpg', to: '/discover/playlist', count: '700', text: '论正确背诗的方式【文言已补充】'},
-                { src: 'src/assets/songs/pic8.jpg', to: '/discover/playlist', count: '800', text: '不后悔，我们爱过'},
+                { src: 'src/assets/songs/pic8.jpg', to: '/discover/playlist', count: '800', text: '不后悔，我们爱过'}
             ],
             swipers: [
                 { src: 'src/assets/slide/slide1.jpg', style: 'background-color: #F0F3Fc; width: 100%;' },
@@ -305,26 +323,43 @@ export default {
                 { src: 'src/assets/GJDJY.jpg', name: '国家大剧院古典音乐频道', desc: '国家大剧院古典音乐官方' },
                 { src: 'src/assets/XXST.jpg', name: '谢谢收听', desc: '南京电台主持人王罄' },
                 { src: 'src/assets/DJ_XS.jpg', name: 'DJ晓苏', desc: '独立DJ，CRI环球旅游广播特邀DJ' }
-            ]
+            ],
         }
     },
     name: 'home',
     components: {
-        headTop
+        headTop,
+        foot
+        // loginBox
     },
     methods: {
-        getShow: function(array, index){
-            console.log('getShow');
-            return true;
-        },
-        show: function(context, index){
+        show(context, index){
             this.$set(this.forShow[context], index, true);
         },
-        hide: function(context, index){
+        hide(context, index){
             this.$set(this.forShow[context], index, false);
-        }
+        },
+        exit(){
+            this.setLoginOut();
+        },
+        login(){
+            let user;
+            let self = this;
+            axios.get('http://g.cn').then(function(response){
+                user = response.data;
+                self.user = user;
+                state.isLogin = true;
+            }).catch(function(err){
+            })
+            this.setLoginIn();
+        },
+        ...mapMutations(['setLoginIn', 'setLoginOut'])
+    },
+    computed: {
+        ...mapGetters(['isLogin'])
     },
     mounted(){
+        let self = this;
         new Swiper('.swiper1', {
             effect : 'fade',
             loop: true,
@@ -334,13 +369,32 @@ export default {
             nextButton: '.swiper-button-next',
             pagination: '.swiper-pagination',
         });
-        new Swiper('.swiper2', {
-            loop: true,
-            slidesPerView : 5,
-            slidesPerGroup: 5,
-            speed: 1000,
-            prevButton: '.swiper-button-prev2',
-            nextButton: '.swiper-button-next2',
+        if(this.isLogin === true){
+            axios.get('http://g.cn').then(function(response){
+                self.idImage = response.data.name;
+            }).catch(function(err){
+                console.log(err);
+            })
+        };
+        axios.get('http://picSlider.cn').then(function(response){
+            let data = response.data.albums;
+            for(let i = 0; i < data.length; i++){
+                self.$set(self.albums, i, {});
+                for(let j in data[i]){
+                    self.$set(self.albums[i], j, data[i][j]);
+                }
+            };
+        }).then(()=>{
+            new Swiper('.swiper2', {
+                loop: true,
+                slidesPerView : 5,
+                slidesPerGroup: 5,
+                speed: 1000,
+                prevButton: '.swiper-button-prev2',
+                nextButton: '.swiper-button-next2',
+            });
+        }).catch(function(err){
+            console.log(err);
         });
     }
 }
@@ -348,6 +402,7 @@ export default {
 <style lang='scss' scoped>
 @import '../styles/common.scss';
 @import '../styles/mixin.scss';
+@import '../styles/swiper.min.css';
 .page-right{
     .tip-title{
         height: 30px;
@@ -444,9 +499,38 @@ export default {
         padding: 20px;
         width: 100%;
         box-sizing: border-box;
+        .user-social{
+            margin-top: 15px;
+            text-align: left;
+            line-height: 1;
+            >span{
+                color: gray;
+                font-size: 18px;
+                >span:nth-of-type(2){
+                    font-size: 12px;
+                }
+                &:hover{
+                    span{
+                        color: #0c73c2;
+                    }
+                    cursor: pointer;
+                }
+            }
+            .user-actions{
+                padding-right: 18px;
+            }
+            .user-follows{
+                padding: 0 18px;
+                border-left: 1px solid lightgray;
+                border-right: 1px solid lightgray;
+            }
+            .user-fans{
+                padding-left: 18px;
+            }
+        }
         .user-message{
             text-align: left;
-            width: 100%;
+            @include wh(100%, 88px);
             .user-pic{
                 height: 84px;
                 text-align: center;
@@ -459,8 +543,68 @@ export default {
             }
             .user-detail{
                 width: 49%;
+                margin-left: 20px;
                 .user-name{
-
+                    font-size: 14px;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    &:hover{
+                        cursor: pointer;
+                        text-decoration: underline;
+                    }
+                }
+                .user-level{
+                    box-sizing: border-box;
+                    line-height: 18px;
+                    text-align: right;
+                    @include wh(45px, 17px);
+                    @include sprites('../assets/icon2.png',-130px, -64px);
+                    padding-left: 20px;
+                    font-style: italic;
+                    font-weight: bold;
+                    color: #999;
+                    font-family: "Arial", "Helvetica", "sans-serif";
+                    font-size: 12px;
+                    margin-bottom: 15px;
+                     &:hover{
+                         cursor: pointer;
+                         color: #777;
+                         background-position: -130px -84px;
+                         .level-icon{
+                             background-position: -192px -84px;
+                         }
+                     }
+                    .level-icon{
+                        float: right;
+                        @include wh(8px, 17px);
+                        @include sprites('../assets/icon2.png', -192px, -64px);
+                     }
+                }
+                .user-sign{
+                    @include wh(100px, 31px);
+                    @include sprites('../assets/button2.png', right, -428px);
+                    padding-right: 5px;
+                    &:hover{
+                        background-position: right -510px;
+                    }
+                    &:active{
+                        background-position: right -592px;
+                    }
+                    .btn-icon{
+                        cursor: pointer;
+                        text-align: center;
+                        line-height: 30px;
+                        color: white;
+                        padding-left: 2px;
+                        @include wh(100%, 100%);
+                        @include sprites('../assets/button2.png', left, -387px);
+                        &:hover{
+                             background-position: left -469px;
+                        }
+                        &:active{
+                            background-position: left -551px;
+                        }
+                    }
                 }
             }
         }
@@ -479,7 +623,7 @@ export default {
             font-size: 12px;
             @include wh(40%, 30px);
             @include linearGradient(rgb(228, 24, 32), rgb(188, 7, 12));
-            @include borderRadius(5px);
+            border-radius: 5px;
             box-shadow: 0 0 1px black;
             color: white;
         }
@@ -597,6 +741,7 @@ export default {
                 display: inline-block;
                 position: absolute;
                 top: 0;
+                left: 0;
                 @include wh(80px, 80px);
                 @include sprites('../assets/coverall.png', -145px, -57px);
             }
@@ -646,7 +791,7 @@ export default {
         display: inline-block;
         text-align: center;
         font-size: 12px;
-        @include wh(100px, 100px);
+        @include wh(131px, 100px);
         .disc-go-listen{
             position: absolute;
             left: 90px;
@@ -712,10 +857,13 @@ export default {
     display: inline-block;
     position: absolute;
     top: 0;
+    left: 0;
 }
 .download-btn{
     display: block;
     @include wh(215px, 56px);
+    border: 0;
+    outline: 0;
     margin-top: 212px;
     margin-left: 19px;
     &:hover{
@@ -858,6 +1006,7 @@ export default {
             .hot-songs-unit{
                 position: absolute;
                 bottom: 0;
+                left: 0;
                 @include wh(140px, 27px);
                 @include sprites('../assets/coverall.png', 0, -537px);
                 .hot-songs-container{
