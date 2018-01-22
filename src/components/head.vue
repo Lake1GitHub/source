@@ -36,13 +36,8 @@
                 <div class='right-part'>
                     <div class='right login-box'>
                         <a class='right login' v-on:mouseover="showList" v-on:mouseleave='hideList'>
-<<<<<<< HEAD
                             <span v-if='isLogin === false' @click='login'>
                                 <span class='hoverStyle'>登录</span>&nbsp;
-=======
-                                <span v-if='isLogin === false' @click='login'>
-                                <span>登录</span>&nbsp;
->>>>>>> 4fc865f3ae4444d643b182af74e51118fb670119
                                 <i class='down-angle'></i>
                             </span>
                             <span v-else>
@@ -71,7 +66,7 @@
                     </div>
                     <span class='right post-video color-gray'>视频投稿</span>
                     <div class='right search'>
-                        <input v-on:input='searchList' v-on:blur='hideSearch' placeholder='音乐/电台/用户' />
+                        <input v-on:input='searchList' v-on:blur='hideSearch' placeholder='音乐/视频/电台/用户' />
                         <div class='search-detail hide' :class='{ show: searchIsShow }'>
                             <p class='search-container ellipsis'>搜 "<span class='ellipsis'>{{ searchMessage }}</span>" 相关用户 ></p>
                             <div v-for='response in searchResult' v-if='' class='detail-box'>
@@ -103,10 +98,7 @@
 <script>
 import axios from 'axios'
 import data from '../mock/mock.js'
-<<<<<<< HEAD
 import {mapGetters, mapMutations} from 'vuex'
-=======
->>>>>>> 4fc865f3ae4444d643b182af74e51118fb670119
 export default {
     props: [
         'Chapter',    // 顶部栏目
@@ -116,11 +108,7 @@ export default {
         return {
             loginIsShow: false,   //准备登录
             searchIsShow: false,  //准备检索
-<<<<<<< HEAD
             searchMessage: '', //检索信息
-=======
-            searchMessage: 'asdf', //检索信息
->>>>>>> 4fc865f3ae4444d643b182af74e51118fb670119
             idImage: '',
             searchResult: [         //检索结果
                 {
@@ -194,11 +182,7 @@ export default {
         hideSearch(){
             this.searchIsShow = false;
         },
-<<<<<<< HEAD
         getId(){
-=======
-        getId: function( fn ){
->>>>>>> 4fc865f3ae4444d643b182af74e51118fb670119
              var self = this;
              axios.get('http://g.cn').then(function(response){
                  self.idImage = response.data.img;
@@ -206,7 +190,6 @@ export default {
                  console.log(err);
              })
         },
-<<<<<<< HEAD
         exit(){
             this.setLoginOut();
         },
@@ -218,16 +201,6 @@ export default {
     },
     mounted(){
         console.log(this.currentPage);
-=======
-        exit: function(){
-            this.getId();
-            this.$emit('exit');
-        },
-        login: function(){
-            this.getId();
-            this.$emit('login');
-        }
->>>>>>> 4fc865f3ae4444d643b182af74e51118fb670119
     }
 }
 
@@ -351,14 +324,9 @@ export default {
         color: #999;
         img{
             border-radius: 50%;
-<<<<<<< HEAD
             margin-bottom: 3px;
         }
         .hoverStyle:hover{
-=======
-        }
-        &:hover{
->>>>>>> 4fc865f3ae4444d643b182af74e51118fb670119
             color: #787878;
             text-decoration: underline;
         }

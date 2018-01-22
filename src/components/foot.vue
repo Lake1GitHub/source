@@ -3,17 +3,10 @@
         <footer class='wrap'>
             <div class='page-left'>
                 <ul class='footer-nav'>
-<<<<<<< HEAD
                     <router-link tag='li' to='/album' class='left border-right li-right'>关于网易</router-link>
                     <router-link tag='li' to='/album' class='left border-right li-right'>客户服务</router-link>
                     <router-link tag='li' to='/album' class='left border-right li-right'>服务条款</router-link>
                     <router-link tag='li' to='/album' class='left border-right li-right'>网站导航</router-link>
-=======
-                    <router-link tag='li' to='/album' class='left border-right'>关于网易</router-link>
-                    <router-link tag='li' to='/album' class='left border-right'>客户服务</router-link>
-                    <router-link tag='li' to='/album' class='left border-right'>服务条款</router-link>
-                    <router-link tag='li' to='/album' class='left border-right'>网站导航</router-link>
->>>>>>> 4fc865f3ae4444d643b182af74e51118fb670119
                     <router-link tag='li' to='/album' class='left li-right'>意见反馈</router-link>
                 </ul>
                 <div class='clear'></div>
@@ -64,10 +57,6 @@ export default{
         }
         .border-right{
             $right: 12px;
-<<<<<<< HEAD
-=======
-            line-height: 10px;
->>>>>>> 4fc865f3ae4444d643b182af74e51118fb670119
             text-align: center;
             padding-right: $right;
             margin-right: $right;

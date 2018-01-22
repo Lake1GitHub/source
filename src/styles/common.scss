@@ -21,12 +21,9 @@ body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, l
 span, i{
     display: inline-block;
 }
-<<<<<<< HEAD
 i{
     vertical-align: middle;
 }
-=======
->>>>>>> 4fc865f3ae4444d643b182af74e51118fb670119
 img{
     vertical-align: middle;
     max-width: 100%;
@@ -89,4 +86,9 @@ img{
 .center{
     text-align: center;
     margin: 0 auto;
+}
+.icon{
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
 }

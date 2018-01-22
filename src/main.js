@@ -3,12 +3,7 @@
 import Vue from 'vue'
 import Mock from 'mockjs'
 import Router from 'vue-router'
-<<<<<<< HEAD
 import routes from './router/index.js'
-=======
-import routes from './router'
-import Mock from 'mockjs'
->>>>>>> 4fc865f3ae4444d643b182af74e51118fb670119
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import store from './store/index.js'
 
