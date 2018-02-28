@@ -1,7 +1,7 @@
 <template>
     <div style='background-color: rgb(245, 245, 245);'>
         <!-- <login-box></login-box> -->
-        <head-top currentPage='recommend' Chapter='discover'></head-top>
+        <head-top></head-top>
         <div class='swiper-container swiper1'>
             <div class='swiper-wrapper'>
                 <!-- 由于swiper的原因，不能直接在 swiper-slide 上添加背景颜色-->
@@ -231,14 +231,12 @@ import headTop from '../components/head.vue'
 import foot from '../components/foot.vue'
 import loginBox from '../components/loginBox.vue'
 import axios from 'axios'
-import {mapGetters, mapMutations} from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import '../plugins/swiper.min.js'
 
 export default {
     data(){
         return {
-            currentPage: 'recommend',
-            Chapter: 'discover',
             slideBackground: ['#F0F3FC','#7E7D83','#831218','#000000','#004799','#596B75'],
             forShow: {
                 albumsShow: [],
@@ -257,14 +255,6 @@ export default {
             albums: [
             ],
             hots: [
-                // { src: 'src/assets/songs/pic1.jpg', to: '/discover/playlist', count: '100', text: '北欧后摇氛围,如梦似幻的落寞之旅' },
-                // { src: 'src/assets/songs/pic2.jpg', to: '/discover/playlist', count: '200', text: '[独立女嗓] 许你一场浮生若梦'},
-                // { src: 'src/assets/songs/pic3.jpg', to: '/discover/playlist', count: '300', text: '我知道风里有诗，那正是民谣的歌。'},
-                // { src: 'src/assets/songs/pic4.jpg', to: '/discover/playlist', count: '400', text: '霓虹回忆（六十至八十年代）-2'},
-                // { src: 'src/assets/songs/pic5.jpg', to: '/discover/playlist', count: '500', text: '【怀疑耳机坏了系列】耳机你对耳朵做了什么'},
-                // { src: 'src/assets/songs/pic6.jpg', to: '/discover/playlist', count: '600', text: '马戏 : 谁在钢丝上行走？'},
-                // { src: 'src/assets/songs/pic7.jpg', to: '/discover/playlist', count: '700', text: '论正确背诗的方式【文言已补充】'},
-                // { src: 'src/assets/songs/pic8.jpg', to: '/discover/playlist', count: '800', text: '不后悔，我们爱过'}
             ],
             swipers: [
                 { src: 'src/assets/slide/slide1.jpg', style: 'background-color: #F0F3Fc; width: 100%;' },
@@ -353,7 +343,7 @@ export default {
             });
             this.setLoginIn();
         },
-        ...mapMutations(['setLoginIn', 'setLoginOut'])
+        ...mapMutations(['setLoginIn', 'setLoginOut', 'setPage', 'setChapter'])
     },
     computed: {
         ...mapGetters(['isLogin'])
@@ -373,7 +363,6 @@ export default {
             axios.get('http://g.cn').then(function(response){
                 self.idImage = response.data.name;
             }).catch(function(err){
-                console.log(err);
             })
         };
         axios.get('http://picSlider.cn').then(function(response){
@@ -394,14 +383,11 @@ export default {
                 nextButton: '.swiper-button-next2',
             });
         }).catch(function(err){
-            console.log(err);
         });
         axios.get('http://picHot.cn').then(function(response){
             let hots = response.data.hots;
-            console.log(response.data);
             self.hots = hots;
         }).catch(function(err){
-            console.log('error');
         });
     }
 }

@@ -4,5 +4,11 @@ export default {
     },
     setLoginOut: state=>{
         state.isLogin = false;
+    },
+    setPage: (state, next)=>{
+        state.curPage = next;
+    },
+    setChapter: (state, next)=>{
+        state.Chapter = next;
     }
 }

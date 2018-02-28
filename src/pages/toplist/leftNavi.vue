@@ -6,7 +6,7 @@
             </nav>
             <section :class='{hoverGray: isCur(index)}' v-for='(song, index) in specialSongs' @click='colChange(index)'>
                 <span class='imgBox left'>
-                    <img :src="imgPath + song.src" />
+                    <img width="40" height="40" :src="imgPath + song.src" />
                     <span class='msk'></span>
                 </span>
                 <div class='bfc'>
@@ -20,7 +20,7 @@
                 全球媒体榜
             </nav>
             <section :class='{hoverGray: isCur(index+4)}' v-for='(song, index) in worldSongs' @click='colChange(index+4)'>
-                <span class='imgBox left'><img :src="imgPath + song.src" /></span>
+                <span class='imgBox left'><img width="40" height="40" :src="imgPath + song.src" /></span>
                 <div class='bfc'>
                     <div class='listTitle'>{{ song.title }}</div>
                     <div class='listUpdate'>{{ song.updateTime }}</div>

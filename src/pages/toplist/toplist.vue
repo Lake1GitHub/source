@@ -4,7 +4,7 @@
         <article class='bfc'>
             <header>
                 <span class='left titleImgBox'>
-                    <img :src='listData.headImg' />
+                    <img width="150" height="150" :src='listData.headImg' />
                     <span class='cover'>
                     </span>
                 </span>
@@ -13,7 +13,7 @@
                     <div class='lastUpdate'><i class='updateIcon'></i> 最近更新 : {{listData.lastUpdate}}<span class='updateTime'>{{listData.updateTime}}</span></div>
                     <div class='listOptions'>
                         <span class='playBox'>
-                            <button class='btnPlay'>
+                            <button class='btnPlay' @click='goPage("toplist")'>
                                 <i class='playIcon'></i>播放
                             </button><button class='temAdd'>
                             </button>
@@ -178,6 +178,9 @@ export default {
                 self.listData = data.listData;
             }).catch(function(){
             });
+        },
+        goPage(){
+            this.$emit('goPage', 'toplist');
         }
     },
     mounted(){

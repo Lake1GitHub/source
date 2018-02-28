@@ -1,17 +1,16 @@
 <template>
     <div>
-        <head-top></head-top>
-        <router-view></router-view>
-        <foot></foot>
+        <slider></slider>
     </div>
 </template>
 <script>
-import headTop from '../components/head.vue'
-import foot from '../components/foot.vue'
-import loginBox from '../components/loginBox.vue'
+import headTop from '../../components/head.vue'
+import foot from '../../components/foot.vue'
+import slider from './slider.vue'
+import loginBox from '../../components/loginBox.vue'
 import axios from 'axios'
 import {mapGetters, mapMutations} from 'vuex'
-import '../mock/mock.js'
+import '../../mock/mock.js'
 export default {
     data(){
         return {
@@ -20,7 +19,8 @@ export default {
     name: 'toplist',
     components:{
         headTop,
-        foot
+        foot,
+        slider
     },
     methods:{
     },
@@ -30,4 +30,6 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
+@import '../../styles/common.scss';
+@import '../../styles/mixin.scss';
 </style>

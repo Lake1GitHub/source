@@ -2,7 +2,10 @@ export default {
     isLogin: state=>{
         return state.isLogin
     },
-    getInfo: state=>{
-
+    getPage: state=>{
+        return state.curPage
+    },
+    getChapter: state=>{
+        return state.Chapter
     }
 }

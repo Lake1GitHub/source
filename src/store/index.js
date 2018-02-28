@@ -6,7 +6,9 @@ import getters from './getters';
 import axios from 'axios'
 Vue.use(Vuex)
 const state = {
-    isLogin: false
+    isLogin: false,
+    curPage: 'recommend',
+    Chapter: 'discover'
 }
 const store = new Vuex.Store({
     state,

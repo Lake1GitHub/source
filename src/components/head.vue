@@ -5,19 +5,19 @@
             <router-link to='/home' class='logo'></router-link>
             <ul class='top-list'>
                 <li class='left'>
-                    <router-link to='/home/discover' class='find-music' :class="{isClicked: Chapter==='discover'}">发现音乐</router-link>
+                    <router-link to='/home/discover' class='find-music' :class="{isClicked: getChapter==='discover'}">发现音乐</router-link>
                     <i v-show='hasNotice("discover")' class='dot'></i>
-                    <span v-if="Chapter==='discover'" class='currentPage-angle'></span>
+                    <span v-if="getChapter==='discover'" class='currentPage-angle'></span>
                 </li>
                 <li class='left'>
-                    <router-link to='/myMusic' class='find-music' :class="{isClicked: Chapter==='myMusic'}">我的音乐</router-link>
+                    <router-link to='/myMusic' class='find-music' :class="{isClicked: getChapter==='myMusic'}">我的音乐</router-link>
                     <i v-show='hasNotice("myMusic")' class='dot'></i>
-                    <span v-if="Chapter==='myMusic'" class='currentPage-angle'></span>
+                    <span v-if="getChapter==='myMusic'" class='currentPage-angle'></span>
                 </li>
                 <li class='left'>
-                    <router-link to='/friend' class='find-music' :class="{isClicked: Chapter==='friend'}">朋友</router-link>
+                    <router-link to='/friend' class='find-music' :class="{isClicked: getChapter==='friend'}">朋友</router-link>
                     <i v-show='hasNotice("friend")' class='dot'></i>
-                    <span v-if="Chapter==='friend'" class='currentPage-angle'></span>
+                    <span v-if="getChapter==='friend'" class='currentPage-angle'></span>
                 </li>
                 <li class='left'>
                     <router-link to='/home' class='find-music'>商城</router-link>
@@ -28,9 +28,9 @@
                     <i v-show='hasNotice("article")' class='dot'></i>
                 </li>
                 <li class='left'>
-                    <router-link to='/download' class='find-music' :class="{isClicked: currentPage==='download'}">下载客户端</router-link>
+                    <router-link to='/download' class='find-music' :class="{isClicked: getPage==='download'}">下载客户端</router-link>
                     <i v-show='hasNotice("download")' class='dot'></i>
-                    <span v-if="currentPage==='download'" class='currentPage-angle'></span>
+                    <span v-if="getPage==='download'" class='currentPage-angle'></span>
                     <span class='hot'></span>
                 </li>
                 <div class='right-part'>
@@ -66,8 +66,8 @@
                     </div>
                     <span class='right post-video color-gray'>视频投稿</span>
                     <div class='right search'>
-                        <input v-on:input='searchList' v-on:blur='hideSearch' placeholder='音乐/视频/电台/用户' />
-                        <div class='search-detail hide' :class='{ show: searchIsShow }'>
+                        <input v-on:keydown='searchList' v-on:blur='hideSearch' placeholder='音乐/视频/电台/用户' />
+                        <div class='search-detail' :class='{ hide: !searchIsShow, show: searchIsShow }'>
                             <p class='search-container ellipsis'>搜 "<span class='ellipsis'>{{ searchMessage }}</span>" 相关用户 ></p>
                             <div v-for='response in searchResult' v-if='' class='detail-box'>
                                 <h3 class='left search-type'><i :class='response.icon'></i> {{ response.name }}</h3>
@@ -83,13 +83,12 @@
         <div class='list-detail'>
             <div class='list-box center'>
                 <ul class='list-wrap center'>
-                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='recommend'}" to='/home'>推荐</router-link>
-                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='toplist'}" to='/discover/toplist'>排行榜</router-link>
-                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='playlist'}" to='/discover/playlist'>榜单</router-link>
-                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='djradio'}" to='/discover/djradio'>主播电台</router-link>
-                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='artist'}" to='/discover/artist'>歌手</router-link>
-                    <router-link tag='li' class='left' :class="{isSelected: currentPage==='album'}" to='/discover/album'>新碟上架</router-link>
-                    <!-- <<router-link :to="{ name: '', params: {} }"></router-link> -->
+                    <li class='left' :class="{isSelected: getPage==='recommend'}" @click='goPage("/", "recommend")'>推荐</li>
+                    <li class='left' :class="{isSelected: getPage==='toplist'}" @click='goPage("/discover/toplist", "toplist")'>排行榜</li>
+                    <li class='left' :class="{isSelected: getPage==='playlist'}" @click='goPage("/discover/playlist", "playlist")'>榜单</li>
+                    <li class='left' :class="{isSelected: getPage==='djradio'}" @click='goPage("/discover/djradio", "djradio")'>主播电台</li>
+                    <li class='left' :class="{isSelected: getPage==='artist'}" @click='goPage("/discover/artist", "artist")'>歌手</li>
+                    <li class='left' :class="{isSelected: getPage==='album'}" @click='goPage("/discover/album", "album")'>新碟上架</li>
                 </ul>
             </div>
         </div>
@@ -100,11 +99,7 @@ import axios from 'axios'
 import data from '../mock/mock.js'
 import {mapGetters, mapMutations} from 'vuex'
 export default {
-    props: [
-        'Chapter',    // 顶部栏目
-        'currentPage' // discover栏目下的子页面
-    ],
-    data: function(){
+    data(){
         return {
             loginIsShow: false,   //准备登录
             searchIsShow: false,  //准备检索
@@ -159,14 +154,17 @@ export default {
             notice:[
                 'friend'
             ],
-            hasNotice: function( notice ){
+            hasNotice( notice ){
                 return this.notice.indexOf(notice)!==-1;
+            },
+            goPage(next, name){
+                this.setPage(name);
+                this.$router.push(next);
             }
         }
     },
     computed:{
-        ...mapGetters(['isLogin']),
-
+        ...mapGetters(['isLogin', 'getPage', 'getChapter']),
     },
     methods:{
         showList(){
@@ -187,7 +185,6 @@ export default {
              axios.get('http://g.cn').then(function(response){
                  self.idImage = response.data.img;
              }).catch(function(err){
-                 console.log(err);
              })
         },
         exit(){
@@ -197,10 +194,18 @@ export default {
             this.getId();
             this.setLoginIn();
         },
-        ...mapMutations(['setLoginIn', 'setLoginOut'])
+        ...mapMutations(['setLoginIn', 'setLoginOut', 'setPage', 'setChapter'])
     },
     mounted(){
-        console.log(this.currentPage);
+        let path = this.$route.path;
+        let lastIndex = path.lastIndexOf("\/");
+        let curRoute = path.substring(lastIndex+1);
+        if(!curRoute){
+            this.setPage('recommend');
+        }else{
+            this.setPage(curRoute);
+        }
+        this.searchIsShow = false;
     }
 }
 
@@ -268,9 +273,11 @@ export default {
     box-shadow: 0 0 10px black;
     z-index: 100;
     .search-container{
+        box-sizing: border-box;
         text-align: left;
         padding: 5px 0;
         padding-left: 10px;
+        height: 40px;
         span{
             display: inline-block;
             max-width: 100px;
